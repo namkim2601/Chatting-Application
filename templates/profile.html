@@ -1,0 +1,21 @@
+</br>
+<button type="button" onclick="logout()">Logout</button>
+</br>
+</br>
+
+<script>
+function logout() {
+  //logging out
+  sessionStorage.removeItem('name');
+  alert("Logging out, returning to login page")
+  document.location.href="/login";
+}
+</script>
+
+<script>
+  //script checks whether user have logged in by getting session storage
+  if (username == null){
+    alert("You have not logged in, please login and retry")
+    document.location.href="/login";
+  }
+</script>

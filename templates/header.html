@@ -1,0 +1,82 @@
+<head>
+  <link rel="stylesheet" href="css/temp.css">
+
+  <script type="text/template" id="header-guest">
+    <ul>
+      <li> &emsp;&emsp;&nbsp;&nbsp; </li>
+      <li><a class="active" href="/login">Login</a></li>
+      <li><a href="/create-account">Create Account</a></li>
+
+      <li> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; </li>
+      <li> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; </li>
+      <li> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; </li>
+
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact-us">Contact Us</a></li>
+    </ul>
+  </script>
+
+  <script type="text/template" id="header-admin">
+    <ul>
+      <li> &emsp;&emsp;&nbsp;&nbsp; </li>
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/admin-page">Admin Page</a></li>
+      <li> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp </li>
+      <li><a href="/friend-list">Friend List</a></li>
+      <li><a href="/messages">Messages</a></li>
+      <li><a href="/discussion">Discussion</a></li>
+      <li> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; </li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact-us">Contact Us</a></li>
+    </ul>
+  </script>
+
+  <script type="text/template" id="header-user">
+    <ul>
+      <li> &emsp;&emsp;&nbsp;&nbsp; </li>
+      <li><a href="/profile">Profile</a></li>
+      <li> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; </li>
+      <li><a href="/friend-list">Friend List</a></li>
+      <li><a href="/messages">Messages</a></li>
+      <li><a href="/discussion">Discussion</a></li>
+      <li> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; </li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact-us">Contact Us</a></li>
+    </ul>
+  </script>
+</head>
+
+<div id="header-guest-target" ></div>
+<div id="header-admin-target" ></div>
+<div id="header-user-target" ></div>
+
+
+<script>
+    // Different headers for guests, users and admins.
+    let username = sessionStorage.getItem("name");
+    let admin = sessionStorage.getItem("admin");
+
+    if (username == null) { // Guest Header
+      var div = document.createElement('div');
+      div.setAttribute('class', 'someClass');
+      div.innerHTML = document.getElementById('header-guest').innerHTML;
+
+      document.getElementById('header-guest-target').appendChild(div);
+
+    } else {
+      if (admin == "True") { // Admin Header
+        var div = document.createElement('div');
+        div.setAttribute('class', 'someClass');
+        div.innerHTML = document.getElementById('header-admin').innerHTML;
+
+        document.getElementById('header-admin-target').appendChild(div);
+
+      } else { // User Header
+        var div = document.createElement('div');
+        div.setAttribute('class', 'someClass');
+        div.innerHTML = document.getElementById('header-user').innerHTML;
+
+        document.getElementById('header-user-target').appendChild(div);
+      }
+    }
+ </script>

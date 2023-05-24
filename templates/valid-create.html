@@ -1,0 +1,55 @@
+<p>Account successfully created! welcome ${name}!
+    Your public and private keys will be generated upon button click, 
+    the public key will be saved by the server and the private key will 
+    be served as a cookie 
+</p>
+<p id = a></p>
+<p> <!-- form that will submit public key of an user to the database-->
+    <form action="/account-key" method="post">
+      <input type="hidden" name="username" id="name" value="${name}"/>
+      <input type="hidden" name="public_key" id="exported-key"/>
+      <input value="Save my public key to the server" type="submit" />
+    </form>
+</p>
+<script>
+  async function exportPublicKey(key) { 
+      //export public key to string, passing it to the form above to be stored in the server
+      const exported = await window.crypto.subtle.exportKey(
+          "jwk",
+          key
+      ).then(function(exported){
+        var jsonString = JSON.stringify(exported);
+        document.getElementById("exported-key").value = jsonString;
+        //document.getElementById("a").innerHTML = jsonString;
+      });
+
+  }
+  async function exportPrivateKey(key) {
+      //export private key to string, setting it as a session object kept by the current user
+      const exported = await window.crypto.subtle.exportKey(
+          "jwk",
+          key
+      ).then(function(exported){
+        var jsonString = JSON.stringify(exported);
+        sessionStorage.setItem("key", jsonString);
+      });
+  }
+  async function agreeSharedSecretKey() {
+      //generate both private and public key for user, and then processing it by calling the two function above
+      const KeyPair = await window.crypto.subtle.generateKey(
+          {
+          name: "ECDH",
+          namedCurve: "P-384"
+          },
+          true,
+          ["deriveKey"]
+      ).then(function(KeyPair) {
+        const PublicKey = KeyPair.publicKey
+        const PrivateKey = KeyPair.privateKey
+        exportPublicKey(PublicKey)
+        exportPrivateKey(PrivateKey)
+        return KeyPair
+      });
+  }
+  let alicek = agreeSharedSecretKey()
+</script>

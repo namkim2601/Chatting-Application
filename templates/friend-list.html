@@ -1,0 +1,53 @@
+</br>
+</br></br>
+<p id="output"> </output></p>
+
+</br>
+<form action="/display_friends" method="post">
+  <input name="name" type="hidden" id="name" value=""/>
+  <input value="Display friendlist" type="submit"/>
+</form>
+</br>
+<form action="/accept-invites" method="post">
+  <input name="n" type="hidden" id="n" value=""/>
+  <input value="Accept invites" type="submit"/>
+</form>
+</br>
+<form action="/send-friendreq" method="post">
+  <input name="username" type="hidden" id="username" value=""/>
+  <input name="receiver" id="receiver"/>
+  <input value="Add friend" type="submit"/>
+</form>
+
+<script>
+function printFriends(friends) {
+      let string = ""
+      for (let i = 0; i < friends.length; i++){
+        
+        string += friends[i]
+        string += "<br />"
+        
+        //string += '<form action="/delete-post" method="post">'
+        //string += '<input name="id" type="hidden" value="'
+        //string += `${id}`
+        //string += '"/>'
+        //string += '<input value="Delete" type="submit" /></form>'
+        
+       }
+      document.getElementById("output").innerHTML = string;
+    }
+
+    printFriends($friends)
+</script>
+<script type="text/javascript">
+  document.getElementById("username").value = username;
+  document.getElementById("name").value = username;
+  document.getElementById("n").value = username;
+</script>
+<script>
+  //script checks whether user have logged in by getting session storage
+  if (username == null){
+    alert("You have not logged in, please login and retry")
+    document.location.href="/login";
+  }
+</script>

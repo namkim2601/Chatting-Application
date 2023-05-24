@@ -1,0 +1,38 @@
+<script>
+  let key = sessionStorage.getItem("key");
+  //var key = getCookie("key");
+  //document.getElementById("demo9").innerHTML = key;
+</script>
+
+<p> <!--form returns messages sent to the user-->
+  <form action="/my-messages" method="post">
+    <input type="hidden" name="name" id="name" value="hello"/>
+    <input value="My messages" type="submit" />
+  </form>
+</p>
+
+<p id="demo1"></p>
+<p id="demo2"></p>
+<p id="demo3"></p>
+
+<p> Look for someone that may receive a message from you <!--form looks for valid receiver to initiate messaging-->
+  <form action="/get-dh" method="post">
+      Receiver name: <input name="username" type="text"/></br></br>
+      &emsp;&emsp;&nbsp;Message: <input name="message" type="text"/></br></br>
+      <input name="sender" id="sender" type="hidden"/>
+      <input value="Send" type="submit" />
+  </form>
+  </p>
+  </center>
+<script>
+  //script checks whether user have logged in by getting session storage
+  if (username == null){
+    alert("You have not logged in, please login and retry")
+    document.location.href="/login";
+  }else{
+    //document.getElementById("demo").innerHTML = username;
+    document.getElementById("name").value = username;
+    document.getElementById("sender").value = username;
+  }
+</script>
+

@@ -1,0 +1,103 @@
+<p>Invalid - ${error}</p>
+send_length = 4;
+                    line_seg = strtok(NULL, " ");
+                    if (line_seg == NULL){
+                        free(trader_string);
+                        write(all_pipes[trader_number*2], "INVALID;", strlen("INVALID;"));
+                        break;
+                    }
+                    int valid_id = atoi(line_seg);
+                    if (valid_id != trader_order_number[trader_number] || line_seg == NULL){
+                        free(trader_string);
+                        write(all_pipes[trader_number*2], "INVALID;", strlen("INVALID;"));
+                        break;
+                    }
+                    
+                    send_line = malloc(4*(sizeof(char*)));
+                    send_line[0] = malloc(sizeof(char)*sizeof("sell"));
+                    strcpy(send_line[0], "sell");
+                    send_size += sizeof("sell");
+
+                    int accept_size = sizeof("ACCEPTED ") + sizeof(line_seg);
+                    write_line = malloc(accept_size*(sizeof(char)));
+                    snprintf(write_line, accept_size, "ACCEPTED %s;", line_seg);
+
+                    line_seg = strtok(NULL, " ");
+                    int found = 0;
+                    for (int y = 0; y < item_number; y++){
+                        if (strcmp(traded_items[y], line_seg) == 0){
+                            sellbook[sell_book_size].product = y;
+                            found = 1;
+                            break;
+                        }
+                    }
+                    if (found == 0 || line_seg == NULL){
+                        free(trader_string);
+                        free(write_line);
+                        free(send_line[0]);
+                        free(send_line);
+                        write(all_pipes[trader_number*2], "INVALID;", strlen("INVALID;"));
+                        break;
+                    }
+                    send_line[1] = malloc(sizeof(char)*(count));
+                    strcpy(send_line[1], line_seg);
+                    send_size += count;
+                    line_seg = strtok(NULL, " ");
+                    if (line_seg == NULL){
+                        free(trader_string);
+                        free(write_line);
+                        free(send_line[0]);
+                        free(send_line[1]);
+                        free(send_line);
+                        write(all_pipes[trader_number*2], "INVALID;", strlen("INVALID;"));
+                        break;
+                    }
+                    send_line[2] = malloc(sizeof(char)*sizeof(line_seg));
+                    strcpy(send_line[2], line_seg);
+                    send_size += sizeof(line_seg);
+
+                    if (atoi(line_seg) <= 0 || atoi(line_seg) > 999999 || line_seg == NULL){
+                        free(trader_string);
+                        free(write_line);
+                        free(send_line[0]);
+                        free(send_line[1]);
+                        free(send_line[2]);
+                        free(send_line);
+                        write(all_pipes[trader_number*2], "INVALID;", strlen("INVALID;"));
+                        break;
+                    }
+                    
+                    sellbook[sell_book_size].amount = atoi(line_seg);
+                    line_seg = strtok(NULL, " ");
+
+                    if (atoi(line_seg) <= 0 || atoi(line_seg) > 999999 || line_seg == NULL){
+                        free(trader_string);
+                        free(write_line);
+                        free(send_line[0]);
+                        free(send_line[1]);
+                        free(send_line[2]);
+                        free(send_line);
+                        write(all_pipes[trader_number*2], "INVALID;", strlen("INVALID;"));
+                        break;
+                    }
+                    int old_sell_level = 0;
+                    for (int y = 0; y < sell_book_size; y++){
+                        if (atoi(line_seg) == sellbook[y].price){
+                            old_sell_level = 1;
+                            break;
+                        }
+                    }
+                    if (old_sell_level == 0){
+                        traded_products[sellbook[sell_book_size].product].sell_level += 1;
+                    }
+                    sellbook[sell_book_size].is_buy = 1;
+                    sellbook[sell_book_size].id = sell_number;
+                    sellbook[sell_book_size].trader = trader_pids[trader_number];
+                    send_line[3] = malloc(sizeof(char)*sizeof(line_seg));
+                    strcpy(send_line[3], line_seg);
+                    send_size += sizeof(line_seg);
+                    sellbook[sell_book_size].price = atoi(line_seg);
+                    sell_number++;
+                    sell_book_size++;
+                    trader_order_number[trader_number]++;
+                    sellbook = realloc(sellbook, (sell_book_size+1)*(sizeof(struct order)));

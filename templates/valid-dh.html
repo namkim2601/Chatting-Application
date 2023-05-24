@@ -1,0 +1,96 @@
+<p> Valid receiver detected, the public key of receiver is: ${p}</p>
+<p id = "a" value = "${p}">${p}</p>
+<p id = "d" value = "${m}">${m}</p>
+<p> Your message will be encrypted with a secret key created with the receiver's public key stored in the server
+    and your private key which is stored as a session object <!--form looks for valid receiver to initiate messagingMessage to receiver: <input name="message" type="text"/>onsubmit="encryptMessage();"-->
+    <form name = "encryptionForm" action="/send-message" method="post" >
+        <input type="hidden" name="username" id="name" value="${name}"/>
+        <input type="hidden" name="message" id="message"/>
+        <input type="hidden" name="sender" value = "${s}"/>
+        <input type="hidden" name="ivr" id="ivr"/>
+        <input value="Send Encrypted Message" type="submit" />
+    </form>
+    </p>
+<script>
+    function convertArrayBufferToBase64(arrayBuffer) {
+        return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    }
+    async function b(){
+        
+        let stringPublicKey = document.getElementById("a").innerHTML;
+        let jsonPublicKey = JSON.parse(stringPublicKey);
+        console.log(JSON.stringify(jsonPublicKey))
+        var receiverPublicKey = await window.crypto.subtle.importKey(
+            "jwk",
+            jsonPublicKey,
+            {
+            name: "ECDH",
+            namedCurve: "P-384"
+            },
+            true,
+            []
+        );
+        console.log(typeof(receiverPublicKey))
+        let stringPrivateKey = sessionStorage.getItem("key");
+        let jsonPrivateKey = JSON.parse(stringPrivateKey);
+        var senderPrivateKey = await window.crypto.subtle.importKey(
+            "jwk",
+            jsonPrivateKey,
+            {
+            name: "ECDH",
+            namedCurve: "P-384"
+            },
+            true,
+            ["deriveKey"]
+        );
+        console.log(typeof(senderPrivateKey))
+        var secretKey = await window.crypto.subtle.deriveKey(
+            {
+            name: "ECDH",
+            public: receiverPublicKey
+            },
+            senderPrivateKey,
+            {
+            name: "AES-GCM",
+            length: 256
+            },
+            true,
+            ["encrypt", "decrypt"]
+        ).then(function(secretKey){
+            let enc = new TextEncoder();
+            let message = document.getElementById("d").innerHTML;
+            var m = enc.encode(message);
+            var ivr = window.crypto.getRandomValues(new Uint8Array(12));
+            document.getElementById("ivr").value = ivr.join();
+            const a = window.crypto.subtle.encrypt(
+                {
+                name: "AES-GCM",
+                iv: ivr
+                },
+                secretKey,
+                m
+            ).then(function(a){
+                var r = convertArrayBufferToBase64(a);
+                document.getElementById("message").value = r;
+                let p = window.crypto.subtle.decrypt(
+                {
+                name: "AES-GCM",
+                iv: ivr
+                },
+                secretKey,
+                a
+                ).then(function(p){
+                    var enc = new TextDecoder();
+                    let m = enc.decode(p);
+                    console.log(m)
+                })  
+            })
+        });
+        }
+
+    
+    b()
+    
+
+</script>
+

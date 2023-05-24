@@ -1,0 +1,59 @@
+<script>
+  if (username == null){
+    alert("You have not logged in, please login and retry")
+    document.location.href="/login";
+  } else if (admin != "True") {
+    alert("You do not have the rights to access this page")
+    document.location.href="/profile";
+  }
+</script>
+
+<form action="/admin-page-add-user" method="post">
+        <h3>Add new user</h3>
+        Username: <input name="username" type="text" />
+        &nbsp;Password: <input name="password" type="password" /></br></br>
+        <input value="Add" type="submit" /></br>
+    </form>
+    </br>
+    <h3>Users</h3>
+    <div id = "output"></br></div>
+</br>
+
+<script>
+    function display_users(lsa) {
+      console.log(lsa)
+      let string = ""
+      for (let i = 0; i < lsa.length/3; i++){
+        string += '<span style="color: #ff0000">User '
+        string += lsa[i*3]
+        string += ': '
+        string += '</span>'
+        string += lsa[i*3+1]
+
+        string += ' ('
+        string += "admin = "
+        string += lsa[i*3+2]
+        string += ")</br>"
+
+        let admin = lsa[i*3+2]
+        if (admin != "1") {
+            let id = lsa[i*3]
+            string += '<div float="left" width="50%" ><form action="/delete-user" method="post">'
+            string += '<input name="id" type="hidden" value="'
+            string += `${id}`
+            string += '"/>'
+            string += '<input value="Delete" type="submit" /></form></div>'
+
+            string += '<div float="left" width="50%" ><form action="/give-admin-rights" method="post">'
+            string += '<input name="id" type="hidden" value="'
+            string += `${id}`
+            string += '"/>'
+            string += '<input value="Give Admin Rights" type="submit" /></form></div>'
+         } else {
+            string += '</br>'
+         }
+       }
+      document.getElementById("output").innerHTML = string;
+    }
+    display_users($ls_param)
+</script>

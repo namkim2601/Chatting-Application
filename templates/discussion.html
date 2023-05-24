@@ -1,0 +1,51 @@
+<div style="float: left; width: 40%; padding-left: 54px; text-align: left;" >
+    </br>
+    <div id = "output"></br></div>
+</div>
+
+<script>
+  if (username == null){
+    alert("You have not logged in, please login and retry")
+    document.location.href="/login";
+  }
+</script>
+
+<script>
+    function display_posts(lsa, admin) {
+      let string = ""
+      for (let i = 0; i < lsa.length/3; i++){
+        string += '<span style="color: #ff0000">'
+        string += lsa[i*3+1]
+        string += "</span><br />"
+        string += lsa[i*3+2]
+        string += "<br />"
+        if (admin == "True") {
+            let id = lsa[i*3]
+            string += '<form action="/delete-post" method="post">'
+            string += '<input name="id" type="hidden" value="'
+            string += `${id}`
+            string += '"/>'
+            string += '<input value="Delete" type="submit" /></form>'
+        } else {
+            string += "<br />"
+        }
+       }
+      document.getElementById("output").innerHTML = string;
+    }
+    display_posts($ls_param, admin)
+</script>
+
+<body>
+    <div style="margin-left: 50%; width: 50%; height: 591px;">
+        </br>
+        <form action="/discussion" method="post">
+            <input name="username" type="hidden" id="username" value=""/>
+            <textarea name="content" rows="4" cols="50"></textarea>
+            <input value="New post" type="submit"/>
+        </form>
+    </div>
+</body>
+
+<script type="text/javascript">
+    document.getElementById("username").value = username;
+</script>

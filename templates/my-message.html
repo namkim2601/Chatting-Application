@@ -1,0 +1,80 @@
+<p id = "message">${m}</p>
+<p id = "a">${k}</p>
+<p id = "d">${ivr}</p>
+<p id = "decrypt"></p>
+<script>
+async function b(){
+    function convertBase64ToArrayBuffer(base64) {
+        return (new Uint8Array(atob(base64).split('').map(char => char.charCodeAt()))).buffer;
+    }
+    function convertArrayBufferToBase64(arrayBuffer) {
+        return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    }
+
+    let stringPublicKey = document.getElementById("a").innerHTML;
+    let jsonPublicKey = JSON.parse(stringPublicKey);
+    var senderPublicKey = await window.crypto.subtle.importKey(
+        "jwk",
+        jsonPublicKey,
+        {
+        name: "ECDH",
+        namedCurve: "P-384"
+        },
+        true,
+        []
+    );
+
+    let stringPrivateKey = sessionStorage.getItem("key");
+    let jsonPrivateKey = JSON.parse(stringPrivateKey);
+    var receiverPrivateKey = await window.crypto.subtle.importKey(
+        "jwk",
+        jsonPrivateKey,
+        {
+        name: "ECDH",
+        namedCurve: "P-384"
+        },
+        true,
+        ["deriveKey"]
+    );
+    var secretKey = await window.crypto.subtle.deriveKey(
+        {
+        name: "ECDH",
+        public: senderPublicKey
+        },
+        receiverPrivateKey,
+        {
+        name: "AES-GCM",
+        length: 256
+        },
+        true,
+        ["encrypt", "decrypt"]
+    ).then(function(secretKey){
+        var text = document.getElementById("d").innerHTML
+        var myArray = text.split(",");
+        const numArray = [];
+        myArray.forEach(str => {
+            numArray.push(Number(str));
+        });
+
+        document.getElementById("d").innerHTML = numArray;
+        var ivr = new Uint8Array(numArray);
+        let mtext = document.getElementById("message").innerHTML
+        var m = convertBase64ToArrayBuffer(mtext);
+        let a = window.crypto.subtle.decrypt(
+            {
+            name: "AES-GCM",
+            iv: ivr
+            },
+            secretKey,
+            m
+        ).then(function(a){
+            var enc = new TextDecoder();
+            let m = enc.decode(a);
+            document.getElementById("decrypt").innerHTML = m;
+            
+        });
+    });
+    
+}
+b()
+</script>
